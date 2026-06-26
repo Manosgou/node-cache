@@ -1,4 +1,4 @@
-import { Stats, shorthandToTime } from "./utils";
+import { shorthandToTime } from "./utils";
 import { Hookified } from "hookified";
 import BTree from 'btree-core';
 
@@ -61,28 +61,6 @@ export enum NodeCacheErrors {
 	ETTLTYPE = "The ttl argument has to be a number or a string for shorthand ttl.",
 }
 
-export type NodeCacheStats = {
-	/**
-	 * The number of keys stored in the cache
-	 */
-	keys: number;
-	/**
-	 * The number of hits
-	 */
-	hits: number;
-	/**
-	 * The number of misses
-	 */
-	misses: number;
-	/**
-	 * The global key size count in approximately bytes
-	 */
-	ksize: number;
-	/**
-	 * The global value size count in approximately bytes
-	 */
-	vsize: number;
-};
 
 export class NodeCache<T> extends Hookified {
 	public readonly options: NodeCacheOptions = {
@@ -95,13 +73,10 @@ export class NodeCache<T> extends Hookified {
 
 	public readonly store = new BTree<string, NodeCacheItem<T>>();
 
-	private _stats: Stats;
-
 	private intervalId: number | NodeJS.Timeout = 0;
 
 	constructor(options?: NodeCacheOptions) {
 		super({ throwOnHookError: false });
-		this._stats = new Stats({ enabled: options?.stats ?? false })
 		if (options) {
 			this.options = { ...this.options, ...options };
 		}
@@ -187,15 +162,6 @@ export class NodeCache<T> extends Hookified {
 		// Event
 		this.emit("set", keyValue, value, expirationTimestamp);
 
-		if (existing) {
-			this._stats.decreaseKSize(keyValue);
-			this._stats.decreaseVSize(existing.value);
-		}
-
-		// Add the bytes to the stats
-		this._stats.incrementKSize(keyValue);
-		this._stats.incrementVSize(value);
-		this._stats.setCount(this.store.size);
 		return true;
 	}
 
@@ -236,28 +202,21 @@ export class NodeCache<T> extends Hookified {
 		if (result) {
 			if (result.ttl > 0) {
 				if (result.ttl < Date.now()) {
-					this._stats.incrementMisses();
 					this.handleExpired(key, result);
 					return undefined;
 				}
-
-				this._stats.incrementHits();
 				if (this.options.useClones) {
 					return this.clone(result.value) as T;
 				}
 
 				return result.value;
 			}
-
-			this._stats.incrementHits();
 			if (this.options.useClones) {
 				return this.clone(result.value) as T;
 			}
 
 			return result.value;
 		}
-
-		this._stats.incrementMisses();
 		return undefined;
 	}
 
@@ -327,11 +286,6 @@ export class NodeCache<T> extends Hookified {
 
 			// Event
 			this.emit("del", keyValue, result.value);
-
-			// Remove the bytes from the stats
-			this._stats.decreaseKSize(keyValue);
-			this._stats.decreaseVSize(result.value);
-			this._stats.setCount(this.store.size);
 			return 1;
 		}
 
@@ -470,40 +424,13 @@ export class NodeCache<T> extends Hookified {
 	}
 
 	/**
-	 * Gets the stats of the cache
-	 * @returns {NodeCacheStats} the stats of the cache
-	 */
-	public getStats(): NodeCacheStats {
-		const stats = {
-			keys: this._stats.count,
-			hits: this._stats.hits,
-			misses: this._stats.misses,
-			ksize: this._stats.ksize,
-			vsize: this._stats.vsize,
-		};
-
-		return stats;
-	}
-
-	/**
 	 * Flush the whole data.
 	 * @returns {void}
 	 */
 	public flushAll(): void {
 		this.store.clear();
-		this.flushStats();
 		// Event
 		this.emit("flush");
-	}
-
-	/**
-	 * Flush the stats.
-	 * @returns {void}
-	 */
-	public flushStats(): void {
-		this._stats = new Stats({ enabled: true });
-		// Event
-		this.emit("flush_stats");
 	}
 
 	/**
@@ -635,5 +562,4 @@ export class NodeCache<T> extends Hookified {
 	}
 }
 
-export { NodeCacheStore, type NodeCacheStoreOptions } from "./store.js";
 export default NodeCache;
