@@ -561,5 +561,4 @@ export class NodeCache<T> extends Hookified {
 		return new Error(error);
 	}
 }
-
 export default NodeCache;
