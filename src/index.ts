@@ -220,6 +220,11 @@ export class NodeCache<T> extends Hookified {
 		return undefined;
 	}
 
+	public getAllValues(): Array<T> {
+		return this.store.toArray().map((entry) => entry[1].value)
+	}
+
+
 	/**
 	 * Gets multiple saved values from the cache. Returns an empty object {} if not found or expired.
 	 * If the value was found it returns an object with the key value pair.

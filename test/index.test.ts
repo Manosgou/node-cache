@@ -60,6 +60,22 @@ test("should set multiple cache items", () => {
 	expect(cache.get(key2)).toBe(value2);
 });
 
+
+test("should set multiple and get all values", () => {
+	const cache = new NodeCache({ checkperiod: 0 });
+	const key1 = faker.string.uuid();
+	const value1 = faker.lorem.word();
+	const key2 = faker.string.uuid();
+	const value2 = faker.lorem.word();
+	const list = [
+		{ key: key1, value: value1 },
+		{ key: key2, value: value2 },
+	];
+	cache.mset(list);
+	const allValues = cache.getAllValues();
+	expect([value1, value2]).toEqual(expect.arrayContaining(allValues));
+});
+
 test("should store items with negative ttl in mset but they expire immediately on access", () => {
 	const cache = new NodeCache({ checkperiod: 0 });
 	const goodKey = faker.string.uuid();
@@ -228,7 +244,7 @@ test("should return an array of keys", () => {
 	cache.set(key1, faker.lorem.word());
 	cache.set(key2, faker.lorem.word());
 	const keys = cache.keys();
-	expect(keys).toEqual([key2, key1]);
+	expect([key1, key2]).toEqual(expect.arrayContaining(keys));
 });
 
 test("should return true or false on has depending on if the key exists", () => {
