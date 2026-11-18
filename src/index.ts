@@ -1,6 +1,5 @@
 import { shorthandToTime } from "./utils";
 import { Hookified } from "hookified";
-import BTree from 'btree-core';
 
 export type NodeCacheOptions = {
 	stats?: boolean
@@ -71,7 +70,7 @@ export class NodeCache<T> extends Hookified {
 		maxKeys: -1,
 	};
 
-	public readonly store = new BTree<string, NodeCacheItem<T>>();
+	public readonly store = new Map<string, NodeCacheItem<T>>();
 
 	private intervalId: number | NodeJS.Timeout = 0;
 

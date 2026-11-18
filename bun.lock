@@ -6,7 +6,6 @@
       "name": "@cacheable/node-cache",
       "dependencies": {
         "@faker-js/faker": "^10.5.0",
-        "btree-core": "^3.2.1",
         "hookified": "^2.2.0",
       },
       "devDependencies": {
@@ -91,8 +90,6 @@
     "ast-kit": ["ast-kit@3.0.0", "", { "dependencies": { "@babel/parser": "^8.0.0", "estree-walker": "^3.0.3", "pathe": "^2.0.3" } }, "sha512-8OG92q3R35qjC/4i6BLBMg8IB+fClWu/1PEwg2Z9Rn+BuNaiEgJzpzn+pxWOdHJWDCAwu2JP0wCDTozAM4QirQ=="],
 
     "birpc": ["birpc@4.0.0", "", {}, "sha512-LShSxJP0KTmd101b6DRyGBj57LZxSDYWKitQNW/mi8GRMvZb078Uf9+pveax1DrVL89vm7mWe+TovdI/UDOuPw=="],
-
-    "btree-core": ["btree-core@3.2.1", "", {}, "sha512-FXo4uXJOnp7UuQXHtTy2H12ZeuIKkS+pEmkj3RqyggxzELercAL0mfxQcqnT2ctkMhSGuO0i8L/bFB4NP45hIw=="],
 
     "cac": ["cac@7.0.0", "", {}, "sha512-tixWYgm5ZoOD+3g6UTea91eow5z6AAHaho3g0V9CNSNb45gM8SmflpAc+GRd1InC4AqN/07Unrgp56Y94N9hJQ=="],
 
