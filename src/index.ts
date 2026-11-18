@@ -220,7 +220,7 @@ export class NodeCache<T> extends Hookified {
 	}
 
 	public getAllValues(): Array<T> {
-		return this.store.toArray().map((entry) => entry[1].value)
+		return Object.values(this.store) as Array<T>
 	}
 
 
